@@ -154,7 +154,8 @@ data "aws_iam_policy_document" "codebuild" {
     effect = "Allow"
     actions = [
       "kms:GenerateDataKey*",
-      "kms:Decrypt"
+      "kms:Decrypt",
+      "kms:DescribeKey"
     ]
 
     resources = [
