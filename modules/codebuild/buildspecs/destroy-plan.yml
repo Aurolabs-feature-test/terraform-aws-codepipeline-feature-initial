@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - cd "$CODEBUILD_SRC_DIR"
+      - cp $CODEBUILD_SRC_DIR_applied_state/* . 2>/dev/null || true
+      - mkdir -p destroy_plan
+  build:
+    commands:
+      - terraform init -no-color
+      - terraform plan -destroy -out=destroy.tfplan
+  post_build:
+    commands:
+      - cp terraform.tfstate* destroy_plan/ 2>/dev/null || true
+      - cp .terraform.lock.hcl destroy_plan/ 2>/dev/null || true
+      - cp destroy.tfplan destroy_plan/ 2>/dev/null || true
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: destroy_plan
+  name: destroy-plan-state

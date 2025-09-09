@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - cd "$CODEBUILD_SRC_DIR"
+      - cp $CODEBUILD_SRC_DIR_terraform_state/* . 2>/dev/null || true
+      - mkdir -p applied_state
+  build:
+    commands:
+      - terraform init
+      - terraform apply tfplan
+  post_build:
+    commands:
+      - cp terraform.tfstate* applied_state/ 2>/dev/null || true
+      - cp .terraform.lock.hcl applied_state/ 2>/dev/null || true
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: applied_state
+  name: applied-state

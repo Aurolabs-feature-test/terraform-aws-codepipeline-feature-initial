@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - mkdir -p state
+  build:
+    commands:
+      - cd "$CODEBUILD_SRC_DIR"
+      - terraform init -no-color
+      - terraform plan -out=tfplan
+  post_build:
+    commands:
+      - cp terraform.tfstate* state/ 2>/dev/null || true
+      - cp .terraform.lock.hcl state/ 2>/dev/null || true
+      - cp tfplan state/ 2>/dev/null || true
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: state
+  name: terraform-state

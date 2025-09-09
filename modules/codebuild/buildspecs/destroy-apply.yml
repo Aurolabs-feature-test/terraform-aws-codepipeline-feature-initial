@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - cd "$CODEBUILD_SRC_DIR"
+      - cp $CODEBUILD_SRC_DIR_destroy_plan_state/* . 2>/dev/null || true
+  build:
+    commands:
+      - terraform init
+      - terraform apply destroy.tfplan
